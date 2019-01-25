@@ -1,0 +1,40 @@
+{
+  "default": {
+    "bot": {
+      "nickname": "TS3j MusicBot",
+      "hwid": "TestTestTest",
+      "identity": { "level": 10, "type": "file", "file": "identity.ini" }
+    },
+    "users": {
+      "accessMode": "blacklist",
+      "blacklist": [],
+      "admins": []
+    },
+    "youtube-dl": {
+      "allowed-hosts": ["youtube.com", "youtu.be", "www.youtube.com"]
+    },
+    "opus": {
+      "bitrate": 96000,
+      "channels": 2,
+      "mode": "music",
+      "fec": true,
+      "plc": 0.02,
+      "frameRate": 50,
+      "complexity": 10
+    }
+  },
+  "servers": [
+    {
+      "name": "Your Teamspeak3 server",
+      "address": "ts.yourserver.com",
+      "port": 9987
+      "bot": {
+        "nickname": "Your Bot"
+        "identity": { "file": "yourbot.ini" }
+      }
+      "users": {
+        "admins": [ "your-uuid" ]
+      }
+    }
+  ]
+}
