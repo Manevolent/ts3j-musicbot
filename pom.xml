@@ -20,21 +20,51 @@
         </repository>
     </repositories>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.8.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.tomp2p</groupId>
+            <artifactId>opus-wrapper</artifactId>
+            <version>1.4</version>
+        </dependency>
+
+        <!-- Careful since this dependency may conflict -->
+        <dependency>
+            <groupId>com.sun.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>3.0.9</version>
+        </dependency>
+
+        <!-- https://github.com/manevolent/ts3j -->
         <dependency>
             <groupId>com.github.manevolent</groupId>
             <artifactId>ts3j</artifactId>
             <version>0.1</version>
         </dependency>
+
+        <!-- https://github.com/manevolent/ffmpeg4j -->
         <dependency>
             <groupId>com.github.manevolent</groupId>
             <artifactId>ffmpeg4j</artifactId>
             <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.tomp2p</groupId>
-            <artifactId>opus-wrapper</artifactId>
-            <version>1.4</version>
         </dependency>
     </dependencies>
 </project>
