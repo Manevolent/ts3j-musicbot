@@ -22,7 +22,7 @@ public abstract class BufferedAudioPlayer extends AudioPlayer {
      * Advances playback when the buffer is too small.
      * @return true if playback should continue, false otherwise.
      */
-    public abstract boolean processBuffer() throws IOException;
+    protected abstract boolean processBuffer() throws IOException;
 
     protected final AudioBuffer getBuffer() {
         return buffer;
@@ -33,30 +33,24 @@ public abstract class BufferedAudioPlayer extends AudioPlayer {
     }
 
     @Override
-    public int read(float[] buffer, int len) throws IOException {
-        if (len > bufferSize)
-            throw new ArrayIndexOutOfBoundsException(
-                    "cannot read from stream: sample length requested too large ("
-                            + len + " > " + bufferSize + ")."
-            );
-
-        int offs = 0;
+    public int read(float[] buffer, int offs, int len) throws IOException {
+        int pos = 0;
         boolean eof = false;
-        while (!eof && offs < len) {
+        while (!eof && pos < len) {
             while (!eof && this.buffer.availableOutput() <= 0) {
                 eof = !processBuffer();
             }
 
-            offs += this.buffer.mix(
+            pos += this.buffer.mix(
                     buffer,
-                    offs,
+                    pos + offs,
                     Math.min(
-                            len - offs,
+                            len - pos,
                             this.buffer.availableOutput()
                     )
             );
         }
 
-        return offs;
+        return pos;
     }
 }

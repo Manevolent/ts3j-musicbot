@@ -16,9 +16,9 @@ public abstract class AbstractMixer implements Mixer {
     private final float audioSampleRate;
     private final int audioChannels;
 
-    private final List<MixerSink> sinks = new LinkedList<>();
-    private final List<MixerChannel> channels = new LinkedList<>();
-    private final List<MixerFilter> filters = new LinkedList<>();
+    private final List<MixerSink> sinks = Collections.synchronizedList(new LinkedList<>());
+    private final List<MixerChannel> channels = Collections.synchronizedList(new LinkedList<>());
+    private final List<MixerFilter> filters = Collections.synchronizedList(new LinkedList<>());
 
     private final Object channelLock = new Object();
 

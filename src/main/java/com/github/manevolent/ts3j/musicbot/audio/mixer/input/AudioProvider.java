@@ -17,6 +17,6 @@ public interface AudioProvider extends AutoCloseable {
      * @return Samples filled into the target buffer.
      * @throws IOException
      */
-    int read(float[] buffer, int len) throws IOException;
+    int read(float[] buffer, int offs, int len) throws IOException;
 
 }

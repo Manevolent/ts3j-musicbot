@@ -1,6 +1,6 @@
 package com.github.manevolent.ts3j.musicbot.audio.resample;
 
-public class SampleConvert {
+public final class SampleConvert {
     private static final int _24MIN = (int) Math.pow(-2, 23);
     private static final int _24MAX = (int) Math.pow(2, 23) - 1;
 

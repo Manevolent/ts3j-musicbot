@@ -14,41 +14,44 @@ public abstract class Resampler implements AutoCloseable {
         this.outputFormat = outputFormat;
     }
 
-    public int resampleFloats(float[] samples, AudioBuffer out) {
-        return resampleFloats(samples, samples.length, out);
-    }
-
-    public int resampleDoubles(double[] sampleBuffer, AudioBuffer out) {
-        return resampleDoubles(sampleBuffer, sampleBuffer.length, out);
-    }
-
-
-    public int resampleDoubles(double[] sampleBuffer, int samples, AudioBuffer out) {
-        float[] floatSampleBuffer = new float[samples];
-        for (int i = 0; i < samples; i ++) floatSampleBuffer[i] = (float) sampleBuffer[i];
-
-        return resampleFloats(floatSampleBuffer, samples, out);
-    }
-
-    public int resampleFloats(float[] sampleBuffer, int samples, AudioBuffer out) {
-        ByteBuffer byteBuffer = ByteBuffer.allocate(samples * 4);
-        byteBuffer.order(ByteOrder.nativeOrder());
-
-        byteBuffer.asFloatBuffer().put(sampleBuffer, 0, samples);
-
-        return resampleFloats(byteBuffer, samples, out);
-    }
-
-    public abstract int resamplePCM(byte[] frameData, int samples, AudioBuffer out);
-
-    public abstract int resampleFloats(ByteBuffer floatBufferAsBytes, int samples, AudioBuffer out);
-
-    public abstract int flush(AudioBuffer out);
-
     public AudioFormat getInputFormat() {
         return inputFormat;
     }
     public AudioFormat getOutputFormat() {
         return outputFormat;
     }
+
+    public int resample(AudioBuffer in, AudioBuffer out) {
+        float[] samples = new float[in.availableOutput()];
+        int read = in.read(samples, 0, samples.length);
+        return resample(samples, read, out);
+    }
+
+    public int resample(float[] samples, AudioBuffer out) {
+        return resample(samples, samples.length, out);
+    }
+
+    public int resample(double[] sampleBuffer, AudioBuffer out) {
+        return resample(sampleBuffer, sampleBuffer.length, out);
+    }
+
+    public int resample(double[] sampleBuffer, int samples, AudioBuffer out) {
+        float[] floatSampleBuffer = new float[samples];
+        for (int i = 0; i < samples; i ++) floatSampleBuffer[i] = (float) sampleBuffer[i];
+
+        return resample(floatSampleBuffer, samples, out);
+    }
+
+    public int resample(float[] sampleBuffer, int samples, AudioBuffer out) {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(samples * 4);
+        byteBuffer.order(ByteOrder.nativeOrder());
+
+        byteBuffer.asFloatBuffer().put(sampleBuffer, 0, samples);
+
+        return resample(byteBuffer, samples, out);
+    }
+
+    public abstract int resample(byte[] frameData, int samples, AudioBuffer out);
+    public abstract int resample(ByteBuffer floatBufferAsBytes, int samples, AudioBuffer out);
+    public abstract int flush(AudioBuffer out);
 }

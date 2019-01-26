@@ -2,19 +2,9 @@ package com.github.manevolent.ts3j.musicbot.audio.player;
 
 import com.github.manevolent.ts3j.musicbot.audio.mixer.input.MixerChannel;
 
-import java.io.IOException;
-
 public abstract class AudioPlayer implements MixerChannel {
 
-    @Override
-    public int available() {
-        return 0;
-    }
-
-    @Override
-    public int read(float[] buffer, int len) throws IOException {
-        return 0;
-    }
+    public abstract boolean isClosed();
 
     /**
      * Finds if the player is playing any audio.

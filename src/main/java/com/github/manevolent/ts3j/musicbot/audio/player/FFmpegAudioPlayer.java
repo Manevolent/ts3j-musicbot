@@ -35,25 +35,13 @@ public class FFmpegAudioPlayer extends BufferedAudioPlayer {
         );
     }
 
-    public boolean hasReachedEof() {
-        return eof;
-    }
-
-    public boolean isClosed() {
-        return closed;
+    @Override
+    public int read(float[] buffer, int offs, int len) throws IOException {
+        return 0;
     }
 
     @Override
-    public boolean isPlaying() {
-        return !isClosed() && (!hasReachedEof() || getBuffer().availableOutput() > 0);
-    }
-
-    @Override
-    public boolean stop() {
-        return kill();
-    }
-
-    public boolean processBuffer() throws IOException {
+    protected boolean processBuffer() throws IOException {
         synchronized (nativeLock) {
             if (eof) return false;
 
@@ -77,6 +65,25 @@ public class FFmpegAudioPlayer extends BufferedAudioPlayer {
 
             return true;
         }
+    }
+
+
+    public boolean hasReachedEof() {
+        return eof;
+    }
+
+    public boolean isClosed() {
+        return closed;
+    }
+
+    @Override
+    public boolean isPlaying() {
+        return !isClosed() && (!hasReachedEof() || getBuffer().availableOutput() > 0);
+    }
+
+    @Override
+    public boolean stop() {
+        return kill();
     }
 
     @Override

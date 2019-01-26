@@ -1,6 +1,7 @@
-package com.github.manevolent.ts3j.musicbot.audio.mixer.output;
+package com.github.manevolent.ts3j.musicbot.client;
 
 import com.github.manevolent.ts3j.enums.CodecType;
+import com.github.manevolent.ts3j.musicbot.audio.mixer.output.OpusMixerSink;
 import com.github.manevolent.ts3j.musicbot.audio.opus.OpusEncoder;
 import com.github.manevolent.ts3j.musicbot.audio.opus.OpusParameters;
 import net.tomp2p.opuswrapper.Opus;
@@ -234,12 +235,14 @@ public class TeamspeakFastMixerSink implements OpusMixerSink {
         }
     }
 
+    @Override
     public void close() {
         if (isRunning()) stop();
 
         closeOpusEncoder();
     }
 
+    @Override
     public boolean start() {
         synchronized (stateLock) {
             if (running) return false;
@@ -285,6 +288,7 @@ public class TeamspeakFastMixerSink implements OpusMixerSink {
      *
      * Note that we don't close the Opus encoder - just in case there are more samples to write/flush out.
      */
+    @Override
     public boolean stop() {
         synchronized (stateLock) {
             if (!running) return false;
