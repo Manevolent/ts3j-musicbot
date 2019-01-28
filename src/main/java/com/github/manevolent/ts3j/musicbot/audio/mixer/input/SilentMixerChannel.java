@@ -51,6 +51,16 @@ public class SilentMixerChannel implements MixerChannel {
     }
 
     @Override
+    public int getSampleRate() {
+        return (int) samplesPerSecond;
+    }
+
+    @Override
+    public int getChannels() {
+        return channels;
+    }
+
+    @Override
     public boolean isPlaying() {
         return !closed;
     }

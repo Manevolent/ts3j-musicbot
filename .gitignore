@@ -1,4 +1,5 @@
 youtube-dl.exe
+/config.json
 
 # Compiled class file
 *.class

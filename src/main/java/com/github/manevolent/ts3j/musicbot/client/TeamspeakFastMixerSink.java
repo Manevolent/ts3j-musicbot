@@ -1,5 +1,6 @@
 package com.github.manevolent.ts3j.musicbot.client;
 
+import com.github.manevolent.ts3j.audio.Microphone;
 import com.github.manevolent.ts3j.enums.CodecType;
 import com.github.manevolent.ts3j.musicbot.audio.mixer.output.OpusMixerSink;
 import com.github.manevolent.ts3j.musicbot.audio.opus.OpusEncoder;
@@ -13,7 +14,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class TeamspeakFastMixerSink implements OpusMixerSink {
+public class TeamspeakFastMixerSink implements OpusMixerSink, Microphone {
     public static final AudioFormat AUDIO_FORMAT =
             new AudioFormat(48000, 32, 2, true, false);
 
@@ -216,7 +217,7 @@ public class TeamspeakFastMixerSink implements OpusMixerSink {
 
             encoder.setEncoderValue(Opus.OPUS_SET_BITRATE_REQUEST, opusParameters.getOpusBitrate());
             encoder.setEncoderValue(Opus.OPUS_SET_COMPLEXITY_REQUEST, opusParameters.getOpusComplexity());
-            encoder.setEncoderValue(Opus.OPUS_SET_PACKET_LOSS_PERC_REQUEST, opusParameters.getOpusPacketLoss());
+            encoder.setEncoderValue(Opus.OPUS_SET_PACKET_LOSS_PERC_REQUEST, opusParameters.getOpusPacketLossPercent());
             encoder.setEncoderValue(Opus.OPUS_SET_VBR_REQUEST, opusParameters.isOpusVbr() ? 1 : 0);
             encoder.setEncoderValue(Opus.OPUS_SET_INBAND_FEC_REQUEST, opusParameters.isOpusFec() ? 1 : 0);
 

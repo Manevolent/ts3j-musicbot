@@ -5,6 +5,7 @@ import com.github.manevolent.ts3j.musicbot.audio.mixer.input.MixerChannel;
 import com.github.manevolent.ts3j.musicbot.audio.mixer.output.MixerSink;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Represents the scaffolding the mixer system in the bot.
@@ -35,9 +36,9 @@ public interface Mixer {
      * Gets an immutable list of filters in the mixer.
      * @return Mixer filters
      */
-    Collection<MixerFilter> getFilters();
-    boolean addFilter(MixerFilter channel);
-    boolean removeFilter(MixerFilter channel);
+    Collection<List<MixerFilter>> getFilters();
+    List<MixerFilter> addFilter(MixerFilter... channel);
+    boolean removeFilter(List<MixerFilter> filterList);
 
     boolean setRunning(boolean running);
 

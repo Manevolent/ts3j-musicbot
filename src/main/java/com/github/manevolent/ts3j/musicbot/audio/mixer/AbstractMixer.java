@@ -4,11 +4,10 @@ import com.github.manevolent.ts3j.musicbot.audio.mixer.filter.MixerFilter;
 import com.github.manevolent.ts3j.musicbot.audio.mixer.input.AudioProvider;
 import com.github.manevolent.ts3j.musicbot.audio.mixer.input.MixerChannel;
 import com.github.manevolent.ts3j.musicbot.audio.mixer.output.MixerSink;
+import com.github.manevolent.ts3j.musicbot.audio.player.ResampledAudioPlayer;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.logging.Logger;
 
 public abstract class AbstractMixer implements Mixer {
     private final int bufferSize;
@@ -18,7 +17,7 @@ public abstract class AbstractMixer implements Mixer {
 
     private final List<MixerSink> sinks = Collections.synchronizedList(new LinkedList<>());
     private final List<MixerChannel> channels = Collections.synchronizedList(new LinkedList<>());
-    private final List<MixerFilter> filters = Collections.synchronizedList(new LinkedList<>());
+    private final List<List<MixerFilter>> filters = Collections.synchronizedList(new LinkedList<>());
 
     private final Object channelLock = new Object();
 
@@ -32,6 +31,23 @@ public abstract class AbstractMixer implements Mixer {
     @Override
     public Collection<MixerSink> getSinks() {
         return Collections.unmodifiableCollection(sinks);
+    }
+
+    @Override
+    public List<MixerFilter> addFilter(MixerFilter... filterChannels) {
+        if (filterChannels.length != getAudioChannels())
+            throw new IllegalArgumentException("invalid filter count: channel mismatch");
+
+        List<MixerFilter> filterList = Collections.unmodifiableList(Arrays.asList(filterChannels));
+
+        filters.add(filterList);
+
+        return filterList;
+    }
+
+    @Override
+    public boolean removeFilter(List<MixerFilter> filterList) {
+        return filters.remove(filterList);
     }
 
     @Override
@@ -68,6 +84,9 @@ public abstract class AbstractMixer implements Mixer {
         synchronized (channelLock) {
             boolean added;
 
+            if (channel.getSampleRate() != getAudioSampleRate() || channel.getChannels() != getAudioChannels())
+                throw new IllegalArgumentException("format mismatch");
+
             synchronized (channelLock) {
                 added = channels.add(channel);
             }
@@ -102,18 +121,8 @@ public abstract class AbstractMixer implements Mixer {
     }
 
     @Override
-    public Collection<MixerFilter> getFilters() {
+    public Collection<List<MixerFilter>> getFilters() {
         return Collections.unmodifiableCollection(filters);
-    }
-
-    @Override
-    public boolean addFilter(MixerFilter filter) {
-        return filters.add(filter);
-    }
-
-    @Override
-    public boolean removeFilter(MixerFilter filter) {
-        return filters.remove(filter);
     }
 
     @Override
@@ -177,12 +186,14 @@ public abstract class AbstractMixer implements Mixer {
     @Override
     public boolean setRunning(boolean running) {
         if (running) {
+            Logger.getGlobal().info("Starting mixer...");
             return getSinks().stream().filter(x -> !x.isRunning()).allMatch(MixerSink::start);
         } else {
+            Logger.getGlobal().info("Stopping mixer...");
             boolean stopped = getSinks().stream().filter(MixerSink::isRunning).allMatch(MixerSink::stop);
 
             // If stopped, reset all filters.
-            if (stopped) filters.forEach(MixerFilter::reset);
+            if (stopped) filters.forEach(filters -> filters.forEach(MixerFilter::reset));
 
             return stopped;
         }

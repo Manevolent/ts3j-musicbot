@@ -4,6 +4,7 @@ import com.github.manevolent.ffmpeg4j.FFmpeg;
 import com.github.manevolent.ffmpeg4j.FFmpegException;
 import com.github.manevolent.ts3j.musicbot.audio.player.AudioPlayer;
 import com.github.manevolent.ts3j.musicbot.audio.player.FFmpegAudioPlayer;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.bytedeco.javacpp.avformat;
@@ -11,22 +12,31 @@ import org.bytedeco.javacpp.avformat;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class YoutubeDLSource extends AbstractDownloadSource {
     private final File youtubeDlExecutable;
 
+    private final Collection<String> allowedHosts;
+
     private RequestMode requestMode = RequestMode.FORCE_HTTP; // Caching
 
-    public YoutubeDLSource(File youtubeDlExecutable) {
+    public YoutubeDLSource(JsonObject configuration) {
         super("youtube-dl");
 
-        this.youtubeDlExecutable = youtubeDlExecutable;
+        this.youtubeDlExecutable = new File(configuration.get("exec").getAsString());
+
+        List<String> allowedHosts = new LinkedList<>();
+        for (JsonElement allowedHostElement : configuration.get("allowed-hosts").getAsJsonArray()) {
+            allowedHosts.add(allowedHostElement.getAsString().toLowerCase());
+        }
+
+        this.allowedHosts = Collections.unmodifiableCollection(allowedHosts);
     }
 
     @Override
     public boolean canDownload(URI uri) {
-        return uri.getScheme().equalsIgnoreCase("http") || uri.getScheme().equalsIgnoreCase("https");
+        return uri.getScheme() != null &&
+                (uri.getScheme().equalsIgnoreCase("http") || uri.getScheme().equalsIgnoreCase("https"));
     }
 
 
@@ -37,6 +47,10 @@ public class YoutubeDLSource extends AbstractDownloadSource {
      * @throws IOException
      */
     private JsonObject getJson(URL videoUrl) throws IOException {
+        // Using an empty list would get around this check
+        if (allowedHosts.size() > 0 && !allowedHosts.contains(videoUrl.getHost().toLowerCase()))
+            throw new IOException(new IllegalAccessException("host not allowed: " + videoUrl.getHost()));
+
         if (!youtubeDlExecutable.exists())
             throw new IOException(new FileNotFoundException(youtubeDlExecutable.getAbsolutePath() + " does not exist"));
 

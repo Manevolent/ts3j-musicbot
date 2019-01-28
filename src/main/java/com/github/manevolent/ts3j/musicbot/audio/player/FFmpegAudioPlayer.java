@@ -50,6 +50,16 @@ public class FFmpegAudioPlayer extends BufferedAudioPlayer {
     }
 
     @Override
+    public int getSampleRate() {
+        return substream.getFormat().getSampleRate();
+    }
+
+    @Override
+    public int getChannels() {
+        return substream.getFormat().getChannels();
+    }
+
+    @Override
     protected boolean processBuffer() throws IOException {
         synchronized (nativeLock) {
             if (eof) return false;

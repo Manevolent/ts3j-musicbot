@@ -11,10 +11,18 @@ import com.github.manevolent.ts3j.musicbot.audio.mixer.filter.MixerFilter;
  * When Q is closer to infinity, the signal volume is reduced.
  */
 public class FilterGain implements MixerFilter {
-    private final float q;
+    private float q;
 
     public FilterGain(float q) {
         this.q = q;
+    }
+
+    public void setQ(float q) {
+        this.q = q;
+    }
+
+    public float getQ() {
+        return q;
     }
 
     @Override

@@ -68,4 +68,14 @@ public class ResampledAudioPlayer extends BufferedAudioPlayer {
     public AudioFormat getFormat() {
         return resampler.getOutputFormat();
     }
+
+    @Override
+    public int getSampleRate() {
+        return (int) resampler.getOutputFormat().getSampleRate();
+    }
+
+    @Override
+    public int getChannels() {
+        return resampler.getOutputFormat().getChannels();
+    }
 }

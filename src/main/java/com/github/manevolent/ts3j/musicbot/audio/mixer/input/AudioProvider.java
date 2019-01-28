@@ -19,4 +19,7 @@ public interface AudioProvider extends AutoCloseable {
      */
     int read(float[] buffer, int offs, int len) throws IOException;
 
+    int getSampleRate();
+    int getChannels();
+
 }
