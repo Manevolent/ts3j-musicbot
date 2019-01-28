@@ -37,7 +37,16 @@ public class FFmpegAudioPlayer extends BufferedAudioPlayer {
 
     @Override
     public int read(float[] buffer, int offs, int len) throws IOException {
-        return 0;
+        int read = 0;
+
+        while (read < len) {
+            while (getBuffer().availableOutput() <= 0)
+                if (!processBuffer()) return read;
+
+            read += getBuffer().read(buffer, offs + read, Math.min(len - read, getBuffer().availableOutput()));
+        }
+
+        return read;
     }
 
     @Override
@@ -116,10 +125,18 @@ public class FFmpegAudioPlayer extends BufferedAudioPlayer {
     ) throws FFmpegException {
         FFmpegInput input = new FFmpegInput(inputStream);
         FFmpegSourceStream stream = input.open(inputFormat);
+
+        for (MediaSourceSubstream substream : stream.registerStreams())
+            substream.setDecoding(false);
+
         for (MediaSourceSubstream substream : stream.registerStreams()) {
-            if (substream.getMediaType() != MediaType.AUDIO) continue;
+            if (substream.getMediaType() != MediaType.AUDIO) {
+                continue;
+            }
 
             AudioSourceSubstream audioSourceSubstream = (AudioSourceSubstream) substream;
+
+            substream.setDecoding(true);
 
             return new FFmpegAudioPlayer(
                     audioSourceSubstream,

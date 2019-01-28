@@ -36,7 +36,7 @@ public class SilentMixerChannel implements MixerChannel {
     }
 
     @Override
-    public int read(float[] buffer, int len) throws IOException {
+    public int read(float[] buffer, int offs, int len) throws IOException {
         // Get the count of samples needed to be sent
         int available = available();
 
